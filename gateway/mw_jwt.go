@@ -152,7 +152,7 @@ func (k *JWTMiddleware) getSecretToVerifySignature(r *http.Request, token *jwt.T
 
 			return secret, nil
 		}
-		k.Logger().Info("decodedCert", decodedCert)
+		k.Logger().Info("decodedCert", string(decodedCert))
 		return decodedCert, nil // Returns the decoded secret
 	}
 
@@ -558,8 +558,11 @@ func (k *JWTMiddleware) ProcessRequest(w http.ResponseWriter, r *http.Request, _
 	// Verify the token
 	token, err := parser.Parse(rawJWT, func(token *jwt.Token) (interface{}, error) {
 		// Don't forget to validate the alg is what you expect:
+		logger.Info("k.Spec.JWTSigningMethod: ", k.Spec.JWTSigningMethod)
+		logger.Info("Parsed token: ", token)
 		switch k.Spec.JWTSigningMethod {
 		case HMACSign:
+			logger.Info("In HMAC")
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf("Unexpected signing method: %v and not HMAC signature", token.Header["alg"])
 			}
@@ -579,7 +582,8 @@ func (k *JWTMiddleware) ProcessRequest(w http.ResponseWriter, r *http.Request, _
 		}
 
 		val, err := k.getSecretToVerifySignature(r, token)
-		logger.Info("getSecretToVerifySignature key", val)
+		logger.Info("getSecretToVerifySignature key: ", string(val))
+		logger.Info("error: ", err)
 		if err != nil {
 			k.Logger().WithError(err).Error("Couldn't get token")
 			return nil, err
@@ -596,8 +600,8 @@ func (k *JWTMiddleware) ProcessRequest(w http.ResponseWriter, r *http.Request, _
 
 		return val, nil
 	})
-	logger.Info("is token valid", token.Valid)
-	logger.Info("token data", token)
+	logger.Info("is token valid: ", token.Valid)
+	logger.Info("token data: ", token)
 	if err == nil && token.Valid {
 		if jwtErr := k.timeValidateJWTClaims(token.Claims.(jwt.MapClaims)); jwtErr != nil {
 			return errors.New("Key not authorized: " + jwtErr.Error()), http.StatusUnauthorized
