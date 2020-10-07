@@ -525,7 +525,7 @@ func (k *JWTMiddleware) ProcessRequest(w http.ResponseWriter, r *http.Request, _
 		// Set hte header name
 		rawJWT = r.URL.Query().Get(config.AuthHeaderName)
 	}
-
+	logger.Info("rawJWT:", rawJWT)
 	if config.UseCookie {
 		authCookie, err := r.Cookie(config.AuthHeaderName)
 		if err != nil {
@@ -539,9 +539,9 @@ func (k *JWTMiddleware) ProcessRequest(w http.ResponseWriter, r *http.Request, _
 		// No header value, fail
 		logger.Info("Attempted access with malformed header, no JWT auth header found.")
 
-		log.Debug("Looked in: ", config.AuthHeaderName)
-		log.Debug("Raw data was: ", rawJWT)
-		log.Debug("Headers are: ", r.Header)
+		log.Info("Looked in: ", config.AuthHeaderName)
+		log.Info("Raw data was: ", rawJWT)
+		log.Info("Headers are: ", r.Header)
 
 		k.reportLoginFailure(tykId, r)
 		return errors.New("Authorization field missing"), http.StatusBadRequest
@@ -549,7 +549,7 @@ func (k *JWTMiddleware) ProcessRequest(w http.ResponseWriter, r *http.Request, _
 
 	// enable bearer token format
 	rawJWT = stripBearer(rawJWT)
-
+	logger.Info("stripped rawJWT:", rawJWT)
 	// Use own validation logic, see below
 	parser := &jwt.Parser{SkipClaimsValidation: true}
 
