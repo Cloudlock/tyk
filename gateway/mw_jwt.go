@@ -577,6 +577,7 @@ func (k *JWTMiddleware) ProcessRequest(w http.ResponseWriter, r *http.Request, _
 		}
 
 		val, err := k.getSecretToVerifySignature(r, token)
+		logger.Info("getSecretToVerifySignature key", key)
 		if err != nil {
 			k.Logger().WithError(err).Error("Couldn't get token")
 			return nil, err
@@ -593,7 +594,8 @@ func (k *JWTMiddleware) ProcessRequest(w http.ResponseWriter, r *http.Request, _
 
 		return val, nil
 	})
-
+	logger.Info("is token valid", token.Valid)
+	logger.Info("token data", token)
 	if err == nil && token.Valid {
 		if jwtErr := k.timeValidateJWTClaims(token.Claims.(jwt.MapClaims)); jwtErr != nil {
 			return errors.New("Key not authorized: " + jwtErr.Error()), http.StatusUnauthorized
