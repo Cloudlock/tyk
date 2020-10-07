@@ -577,7 +577,7 @@ func (k *JWTMiddleware) ProcessRequest(w http.ResponseWriter, r *http.Request, _
 		}
 
 		val, err := k.getSecretToVerifySignature(r, token)
-		logger.Info("getSecretToVerifySignature key", key)
+		logger.Info("getSecretToVerifySignature key", val)
 		if err != nil {
 			k.Logger().WithError(err).Error("Couldn't get token")
 			return nil, err
