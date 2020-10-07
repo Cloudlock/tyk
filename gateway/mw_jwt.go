@@ -124,6 +124,8 @@ func (k *JWTMiddleware) getIdentityFromToken(token *jwt.Token) (string, error) {
 func (k *JWTMiddleware) getSecretToVerifySignature(r *http.Request, token *jwt.Token) ([]byte, error) {
 	config := k.Spec.APIDefinition
 	// Check for central JWT source
+	k.Logger().Info("config.JWTSource", config.JWTSource)
+	k.Logger().Info("config", config)
 	if config.JWTSource != "" {
 		// Is it a URL?
 		if httpScheme.MatchString(config.JWTSource) {
@@ -150,7 +152,7 @@ func (k *JWTMiddleware) getSecretToVerifySignature(r *http.Request, token *jwt.T
 
 			return secret, nil
 		}
-
+		k.Logger().Info("decodedCert", decodedCert)
 		return decodedCert, nil // Returns the decoded secret
 	}
 
