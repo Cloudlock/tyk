@@ -580,7 +580,7 @@ func (k *JWTMiddleware) ProcessRequest(w http.ResponseWriter, r *http.Request, _
 				return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 			}
 		}
-
+		logger.Info("error before signature", err)
 		val, err := k.getSecretToVerifySignature(r, token)
 		logger.Info("getSecretToVerifySignature key: ", string(val))
 		logger.Info("error: ", err)
