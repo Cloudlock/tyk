@@ -138,7 +138,9 @@ func (k *JWTMiddleware) getSecretToVerifySignature(r *http.Request, token *jwt.T
 		}
 
 		// If not, return the actual value
+		logger.Info("before decode")
 		decodedCert, err := base64.StdEncoding.DecodeString(config.JWTSource)
+		logger.Info("after decode")
 		if err != nil {
 			return nil, err
 		}
@@ -153,6 +155,7 @@ func (k *JWTMiddleware) getSecretToVerifySignature(r *http.Request, token *jwt.T
 			return secret, nil
 		}
 		k.Logger().Info("decodedCert", string(decodedCert))
+		return []byte("whydahellitdoesntwork"), nil
 		return decodedCert, nil // Returns the decoded secret
 	}
 
