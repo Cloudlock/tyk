@@ -124,8 +124,8 @@ func (k *JWTMiddleware) getIdentityFromToken(token *jwt.Token) (string, error) {
 func (k *JWTMiddleware) getSecretToVerifySignature(r *http.Request, token *jwt.Token) ([]byte, error) {
 	config := k.Spec.APIDefinition
 	// Check for central JWT source
-	k.Logger().Info("config.JWTSource", config.JWTSource)
-	k.Logger().Info("config", config)
+	k.Logger().Info("config.JWTSource: ", config.JWTSource)
+	k.Logger().Info("config: ", config)
 	if config.JWTSource != "" {
 		// Is it a URL?
 		if httpScheme.MatchString(config.JWTSource) {
@@ -527,7 +527,7 @@ func (k *JWTMiddleware) ProcessRequest(w http.ResponseWriter, r *http.Request, _
 		// Set hte header name
 		rawJWT = r.URL.Query().Get(config.AuthHeaderName)
 	}
-	logger.Info("rawJWT:", rawJWT)
+	logger.Info("rawJWT: ", rawJWT)
 	if config.UseCookie {
 		authCookie, err := r.Cookie(config.AuthHeaderName)
 		if err != nil {
@@ -551,7 +551,7 @@ func (k *JWTMiddleware) ProcessRequest(w http.ResponseWriter, r *http.Request, _
 
 	// enable bearer token format
 	rawJWT = stripBearer(rawJWT)
-	logger.Info("stripped rawJWT:", rawJWT)
+	logger.Info("stripped rawJWT: ", rawJWT)
 	// Use own validation logic, see below
 	parser := &jwt.Parser{SkipClaimsValidation: true}
 
