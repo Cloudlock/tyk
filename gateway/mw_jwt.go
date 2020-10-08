@@ -580,7 +580,8 @@ func (k *JWTMiddleware) ProcessRequest(w http.ResponseWriter, r *http.Request, _
 				return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 			}
 		}
-		logger.Info("error before signature", err)
+
+		logger.Info("token valid before verification", token.Valid)
 		val, err := k.getSecretToVerifySignature(r, token)
 		logger.Info("getSecretToVerifySignature key: ", string(val))
 		logger.Info("error: ", err)
@@ -600,6 +601,7 @@ func (k *JWTMiddleware) ProcessRequest(w http.ResponseWriter, r *http.Request, _
 
 		return val, nil
 	})
+
 	logger.Info("is token valid: ", token.Valid)
 	logger.Info("token data: ", token)
 	if err == nil && token.Valid {
